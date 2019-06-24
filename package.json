@@ -1,0 +1,22 @@
+{
+  "name": "teamup",
+  "version": "0.0.1",
+  "description": "A Discord bot to help players organize themselves into teams.",
+  "main": "bot.js",
+  "scripts": {
+    "test": "node bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SamanthaOrizabal/DiscordHackweek-TeamUp.git"
+  },
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/SamanthaOrizabal/DiscordHackweek-TeamUp/issues"
+  },
+  "homepage": "https://github.com/SamanthaOrizabal/DiscordHackweek-TeamUp#readme",
+  "devDependencies": {
+    "discord.js": "^11.5.1"
+  }
+}

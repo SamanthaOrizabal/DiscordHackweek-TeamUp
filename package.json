@@ -18,5 +18,8 @@
   "homepage": "https://github.com/SamanthaOrizabal/DiscordHackweek-TeamUp#readme",
   "devDependencies": {
     "discord.js": "^11.5.1"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security"
   }
 }

@@ -3,9 +3,6 @@ const client = new Discord.Client();
 const auth = require('./auth.json');
 const config = require('./config.json');
 
-function notify(recipient, message) {
-
-}
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);

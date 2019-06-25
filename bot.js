@@ -4,6 +4,9 @@ const auth = require('./auth.json');
 const config = require('./config.json');
 const colors = require('./colors.json');
 const fs = require('fs');
+const func = require('./functions.js');
+
+
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);

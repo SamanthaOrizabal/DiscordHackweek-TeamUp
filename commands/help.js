@@ -25,7 +25,7 @@ module.exports.run = async(client, message, args) => {
             
             message.channel.send(sendHelpEmbed);
         } else {
-            message.channel.send("I don't recognize " + "`" + messagecontent + "`" + " as a command. Type `?help` for a list of commands");
+            message.channel.send("I don't recognize " + "`" + messagecontent + "`" + " as a command. Type " +  "`" + `${prefix}` +"help`" + " for a list of commands");
         }
     }
 

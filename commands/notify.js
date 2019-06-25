@@ -7,27 +7,30 @@ const func = require('../functions.js');
 //Main loop for executing command
 module.exports.run = async(client, message, args) => {
 
-  //convert timestamp to 24h format
-  args[1] = args[1].split(':');
-  if (args[1][1].endsWith('am')) {
-    args[1][1] = args[1][1].slice(0, -2);
-  } else if (args[1][1].endsWith('pm')) {
-    args[1][0] = parseInt(args[1][0]) + 12;
-    args[1][1] = args[1][1].slice(0, -2)
+  //date/time not entered
+  if (args.length < 2) {
+    message.channel.send("Please specify the date and time you want to be notified at");
+    return;
   }
-  if (args[1][0].length == 1) {
-    args[1][0] = '0' + args[1][0];
+
+  var time = func.to24hour(args.pop());
+  var date = args.join(" ");
+  var dateTime = new Date(date + "T" + time);
+  console.log(time, date, dateTime);
+  console.log(date+"T"+time);
+  //This is a determine if the date is invalid and reply appropriately
+  if (isNaN(dateTime.getTime())) {
+    message.channel.send("Sorry! That is not a vaild date/time format. See the help for more info.");
+    return;
   }
-  args[1] = args[1][0] + ":" + args[1][1] + ":00" //computer readable timestamp
 
   //sends a DM to the user that calls the command at the specified time
-  setTimeout(function() {
-    message.author.send('hello, this is a notification')
-      .then(message => console.log(`Sent message: ${message.content}`))
-      .catch(console.error);
-  }, func.calculateDelay(args[0] + "T" + args[1]));
+  var reply = "This is a notification.";
+  message.channel.send("Okay! I will send you a notification at " + new Date(dateTime) + ".");
+  console.log(func.calculateDelay(dateTime));
+  setTimeout(function() {func.sendNotification(message.author, reply)}, func.calculateDelay(dateTime));
 
-  message.channel.send("Okay! I will send you a notification on " + new Date(args[0] + "T" + args[1]) + ".");
+
 }
 
 //Config for the command here

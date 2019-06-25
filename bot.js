@@ -4,10 +4,13 @@ const auth = require('./auth.json');
 const config = require('./config.json');
 const colors = require('./colors.json');
 const fs = require('fs');
+const func = require('./functions.js');
+
+
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
-  console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`); 
+  console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
 });
 
 //Create Collections for commands and commands aliases
@@ -36,6 +39,12 @@ fs.readdir('./commands', (err, files) => {
 });
 
 client.on('message', async message => {
+
+  /*
+  messages to the bot follow this basic structure:
+  (prefix)(command)(arguments)
+  e.g. ?help notifications
+  */
 
   //Ignore other bots
   if (message.author.bot) return;

@@ -44,7 +44,7 @@ client.on('message', async message => {
   const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
 
-  let commandfile = client.commands.get(command || client.commands.get(client.aliases.get(command)));
+  let commandfile = client.commands.get(command) || client.commands.get(client.aliases.get(command));
 
   if (commandfile) {
     commandfile.run(client, message, args);

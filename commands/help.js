@@ -6,6 +6,7 @@ const colors = require('../colors.json');
 //Main loop for executing command
 module.exports.run = async(client, message, args) => {
     const prefix = config.prefix;
+    let messagecontent = message.content;
 
     if (args[0] == "help") return message.channel.send(`Try ${prefix}help instead.`);
 
@@ -21,17 +22,21 @@ module.exports.run = async(client, message, args) => {
                 **Description:** ${cmd.config.description}\n
                 **Usage:** ${cmd.config.usage || "No Usage"}\n
                 **Aliases:** ${cmd.config.noalias || cmd.config.aliases}`);
+            
+            message.channel.send(sendHelpEmbed);
+        } else {
+            message.channel.send("I don't recognize " + "`" + messagecontent + "`" + " as a command. Type `?help` for a list of commands");
         }
     }
 
     if (!args[0]) {
         let embed = new Discord.RichEmbed()
         .setColor(colors.cyan)
-        .setAuthor('Help Command', message.guild.iconURL)
+        .setAuthor('Help is here!', message.guild.iconURL)
         .setTimestamp()
-        .setDescription(`The bot prefix is: ${prefix}\n
-        These are the commands I can understand.`)
-        .addField('Commands:', '`command1`', '`command2`', '`command3`')
+        .setDescription(`The bot prefix is: **${prefix}**\n
+        These are the commands I can understand:`)
+        .addField('Commands:', '``command1`` ``command2`` ``command3``')
         .setFooter("TeamUp Bot 2019", client.user.displayAvatarURL);
 
         message.channel.send(embed);

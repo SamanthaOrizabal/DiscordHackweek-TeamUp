@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const auth = require('./auth.json');
 const config = require('./config.json');
+const colors = require('./colors.json');
 const fs = require('fs');
 
 client.on('ready', () => {
@@ -9,9 +10,11 @@ client.on('ready', () => {
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`); 
 });
 
+//Create Collections for commands and commands aliases
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
 
+//Look through the commands folder and find the command file needed
 fs.readdir('./commands', (err, files) => {
   if (err) {
     console.log(err);

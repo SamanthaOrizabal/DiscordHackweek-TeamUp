@@ -46,6 +46,10 @@ client.on('message', async message => {
   e.g. ?help notifications
   */
 
+  let status = "?help and find a team!";
+
+  client.user.setActivity(status, {type: "WATCHING"});
+
   //Ignore other bots
   if (message.author.bot) return;
 

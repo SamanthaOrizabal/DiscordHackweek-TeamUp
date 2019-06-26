@@ -17,19 +17,13 @@ module.exports.run = async(client, message, args) => {
     return;
   }
 
-  var time = func.to24hour(args[1]);
-  var date = args[0];
+  var dateTime = func.readUserDate(args[0], args[1])
+  if (dateTime === false)
+    return;
+
   //Remove date and time args to retain rest of message
   args.splice(0, 2);
-  var dateTime = new Date(date + "T" + time);
   var msg = args.join(" ");
-  console.log(time, date, dateTime);
-  console.log(date+"T"+time);
-  //This is a determine if the date is invalid and reply appropriately
-  if (isNaN(dateTime.getTime())) {
-    message.channel.send("Sorry! That is not a vaild date/time format. See `?help notify` for more info.");
-    return;
-  }
 
   //sends a DM to the user that calls the command at the specified time
   let reply = new Discord.RichEmbed()
@@ -38,7 +32,6 @@ module.exports.run = async(client, message, args) => {
   .setDescription(msg);
 
   message.channel.send("Okay! I will send you a notification at " + new Date(dateTime) + ".");
-  console.log(func.calculateDelay(dateTime));
   setTimeout(function() {func.sendNotification(message.author, reply)}, func.calculateDelay(dateTime));
 }
 

@@ -1,9 +1,6 @@
 module.exports.calculateDelay = function(date) {
   //calculate the number of milliseconds until the specified date
-  console.log("calcuating...")
   var now = new Date();
-  console.log(date);
-  console.log(date-now);
   return date-now;
 }
 
@@ -31,6 +28,17 @@ module.exports.to24hour = function(time) {
 
   time = time[0] + ":" + time[1] + ":" + time[2] //computer readable timestamp
   return time
+}
+
+module.exports.readUserDate = function(date, time) {
+  time = module.exports.to24hour(time);
+  var dateTime = new Date(date + "T" + time);
+  //This is a determine if the date is invalid and reply appropriately
+  if (isNaN(dateTime.getTime())) {
+    message.channel.send("Sorry! That is not a vaild date/time format. See `?help create` for more info."); // COMBAK: Maybe we need a help page specifically for dates
+    return false;
+  }
+  return dateTime;
 }
 
 module.exports.sendNotification = function(recipient, message) {

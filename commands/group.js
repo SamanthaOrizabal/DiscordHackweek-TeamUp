@@ -6,12 +6,17 @@ const func = require('../functions.js');
 
 //Main loop for executing command
 module.exports.run = async(client, message, args) => {
-  if (args[1] === "create") {
+  if (args[1] === "create") { //group create [name] [game] [date] [time]
+
+    var dateTime = func.readUserDate(args[3], args[4]);
+    if (dateTime === false)
+      return;
+
     var group = {
       creator: message.author,
       name: args[2],
       game: args[3],
-      time: args[4] + "T" + args[5]
+      time: dateTime
     }
   }
 }

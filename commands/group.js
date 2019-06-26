@@ -16,8 +16,22 @@ module.exports.run = async(client, message, args) => {
       creator: message.author,
       name: args[2],
       game: args[3],
-      time: dateTime
+      time: dateTime,
+      participants: [message.author]
     }
+
+    //save this to the database, and rememer to include server it was created on
+
+  } else if (args[1] === "join") { //group join [name]
+    //find group with name == args[1] in this server/message channel
+    //add message.author t0 participants list
+  } else if (args[1] === "leave") { //group leave [name]
+    //find group with name == args[1] in this server/message channel
+    //remove message.author from participants list
+  } else if (args[1] === "disband") { //group disband [name]
+    //find group with name == args[1] in this server/message channel
+    //confirm message.author is group creator
+    //delete group
   }
 }
 

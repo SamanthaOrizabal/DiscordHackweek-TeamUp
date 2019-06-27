@@ -9,6 +9,7 @@ const Models = require('../models.js');
 //Main loop for executing command
 module.exports.run = async(client, message, args) => {
   //group create [name] [game] [date] [time]
+  //group args[0] args[1] args[2] args[3] args[4]
   if (args[0] === "create") {
 
     var dateTime = func.readUserDate(args[3], args[4]);
@@ -44,7 +45,7 @@ module.exports.run = async(client, message, args) => {
       server: server
     });
 
-    //i have no idea how to use mongodb and why this throws an error
+    //save the group into mongodb
     group.save(function(error) {
       if (error) {
         console.error(error);
@@ -58,15 +59,24 @@ module.exports.run = async(client, message, args) => {
 
   } else if (args[0] === "join") { //group join [name]
     //find group with name == args[1] in this server/message channel
+<<<<<<< HEAD
     //add message.author t0 participants list
-    // COMBAK: We need to prevent players from joining if they are already in the group
     Models.Group.findOne({ name: args[1], server: message.guild.id }, function(err, docs) {
+=======
+    //add message.author to participants list
+    // COMBAK: We need to prevent players from joining if they are already in the group
+    Models.Group.findOne({ name: args[1], server: server }, function(err, docs) {
+>>>>>>> 854b040029489208996738289caa442d5fc463db
       if (err) {
         console.error(err)
         return;
       }
       if (docs == null) {
         message.channel.send("That group doesn't exist");
+        return;
+      }
+      if (docs.participants.includes(message.author)) {
+        message.channel.send("You are already in that group!");
         return;
       }
       docs.participants.push(message.author);
@@ -86,12 +96,49 @@ module.exports.run = async(client, message, args) => {
   } else if (args[0] === "leave") { //group leave [name]
     //find group with name == args[1] in this server/message channel
     //remove message.author from participants list
+    Models.Group.findOne({ name: args[1], server: message.guild.id }, function(err, docs) {
+      if (err) {
+        console.error(err)
+        return;
+      }
+      if (docs == null) {
+        message.channel.send("That group doesn't exist");
+        return;
+      }
+
+      var index = docs.participants.indexOf(message.author)
+      if (index > -1) {
+        docs.participants.splice(index, 1);
+        docs.save(function(error) {
+          if (error) {
+            console.error(error);
+            message.channel.send("**ERROR:** " + error.message);
+            return;
+          } else {
+            console.log("Group successfully saved into mongodb.");
+            message.channel.send('You left the group.');
+          }
+        });
+      } else {
+        message.channel.send("you are not in that group!");
+      }
+
+    });
+
 
   } else if (args[0] === "disband") { //group disband [name]
     //find group with name == args[1] in this server/message channel
     //confirm message.author is group creator
     //delete group
-  }
+  }  else if (args[0] === "info") { //group info [name]
+    //find group with name == args[1] in this server/message channel
+    //send message about the info of the group
+    //name of group, time and date, game, participants, owner
+    Models.Group.find({server: server, name: args[1]}, function(error, result) {
+      console.log(result);
+
+    });
+  } 
 }
 
 //Config for the command here

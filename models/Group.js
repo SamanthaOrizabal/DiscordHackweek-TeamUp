@@ -5,8 +5,10 @@ let groupSchema = new Schema({
     creator: String,
     name: String,
     game: String,
-    time: Date,
-    participants: Array,
+    date: Date,
+    participants: {
+        type: [String]
+    },
     server: String
 });
 

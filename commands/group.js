@@ -10,7 +10,6 @@ const Models = require('../models.js');
 module.exports.run = async(client, message, args) => {
   //group create [name] [game] [date] [time]
   if (args[0] === "create") {
-    message.channel.send("at least u tried lol");
 
     var dateTime = func.readUserDate(args[3], args[4]);
     var server = message.guild.id;
@@ -24,7 +23,7 @@ module.exports.run = async(client, message, args) => {
       creator: message.author,
       name: args[1],
       game: args[2],
-      time: dateTime,
+      date: dateTime,
       participants: [message.author],
       server: server
     });
@@ -33,6 +32,7 @@ module.exports.run = async(client, message, args) => {
     group.save(function(error) {
       if (error) {
         console.error(error);
+        message.channel.send("**ERROR:** " + error.message);
       } else {
         console.log("Group successfully saved into mongodb.");
       }

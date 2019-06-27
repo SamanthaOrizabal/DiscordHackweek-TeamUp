@@ -17,10 +17,10 @@
   },
   "homepage": "https://github.com/SamanthaOrizabal/DiscordHackweek-TeamUp#readme",
   "devDependencies": {
-    "discord.js": "^11.5.1"
+    "discord.js": "^11.5.1",
+    "mongoose": "^5.6.1"
   },
   "dependencies": {
-    "fs": "0.0.1-security",
-    "mongoose": "^5.6.1"
+    "fs": "0.0.1-security"
   }
 }

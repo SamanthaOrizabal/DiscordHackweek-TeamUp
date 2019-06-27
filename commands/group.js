@@ -10,10 +10,10 @@ const Models = require('../models.js');
 module.exports.run = async(client, message, args) => {
   //group create [name] [game] [date] [time]
   //group args[0] args[1] args[2] args[3] args[4]
+  var server = message.guild.id;
   if (args[0] === "create") {
 
     var dateTime = func.readUserDate(args[3], args[4]);
-    var server = message.guild.id;
 
     if (dateTime === false) {
       message.channel.send("Please specify the date and time of your group's meeting time.");
@@ -96,9 +96,29 @@ module.exports.run = async(client, message, args) => {
     //find group with name == args[1] in this server/message channel
     //send message about the info of the group
     //name of group, time and date, game, participants, owner
-    Models.Group.find({server: server, name: args[1]}, function(error, result) {
+    Models.Group.findOne({server: server, name: args[1]}, function(error, result) {
       console.log(result);
+      var creatorID = result.creator.substring(2, result.creator.length-1);
+      var creatorUsername = message.guild.members.get(creatorID).user.username;
+      var creatorAvatarURL = message.guild.members.get(creatorID).user.displayAvatarURL;
 
+      var participants = result.participants;
+      var participantsAmount = result.participants.length;
+      var game = result.game;
+      var date = result.date;
+
+      var groupInfoEmbed = new Discord.RichEmbed()
+        .setColor(colors.orange)
+        .setTitle(result.name)
+        .setAuthor(creatorUsername + "'s " + game + " group", creatorAvatarURL)
+        .setDescription(creatorUsername + " created this group with " + participantsAmount + " participants for " + game + ".")
+        .setThumbnail('https://i.imgur.com/wSTFkRM.png')
+        .addField("Creator", creatorUsername, true)
+        .addField("Game", game, true)
+        .addField("Date", date, true)
+        .addField("Participants", participants);
+      
+      message.channel.send(groupInfoEmbed);
     });
   } 
 }

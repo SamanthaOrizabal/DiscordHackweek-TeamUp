@@ -6,11 +6,13 @@ const func = require('../functions.js');
 
 //Main loop for executing command
 module.exports.run = async(client, message, args) => {
-  if (args[1] === "create") { //group create [name] [game] [date] [time]
+  //group create [name] [game] [date] [time]
+  if (args[1] === "create") {
 
     var dateTime = func.readUserDate(args[3], args[4]);
-    if (dateTime === false)
+    if (dateTime === false) {
       return;
+    }
 
     var group = {
       creator: message.author,
@@ -20,7 +22,7 @@ module.exports.run = async(client, message, args) => {
       participants: [message.author]
     }
 
-    //save this to the database, and rememer to include server it was created on
+    //save this to the database, and remember to include server it was created on
 
   } else if (args[1] === "join") { //group join [name]
     //find group with name == args[1] in this server/message channel

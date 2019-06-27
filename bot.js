@@ -38,6 +38,9 @@ fs.readdir('./commands', (err, files) => {
   });
 });
 
+client.mongoose = require('./utils/mongoose');
+client.mongoose.init();
+
 client.on('message', async message => {
 
   /*

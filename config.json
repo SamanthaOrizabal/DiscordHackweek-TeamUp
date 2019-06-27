@@ -1,3 +1,4 @@
 {
-    "prefix": "?"
+    "prefix": "?",
+    "mongodbURL": "mongodb://localhost:27017/teamup"
 }

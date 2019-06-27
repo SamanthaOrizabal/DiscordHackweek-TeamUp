@@ -40,7 +40,7 @@ module.exports.run = async(client, message, args) => {
         .setAuthor('Help is here!', message.guild.iconURL)
         .setDescription(`The bot prefix is: **${prefix}**\n
         These are the commands I can understand!`)
-        .addField('Commands', '``help`` ``notify`` ``command3``');
+        .addField('Commands', '``help`` ``notify`` ``group``');
         // .setFooter("TeamUp Bot 2019", client.user.displayAvatarURL);
 
         message.channel.send(embed);

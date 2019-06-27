@@ -3,24 +3,40 @@ const auth = require('../auth.json');
 const config = require('../config.json');
 const colors = require('../colors.json');
 const func = require('../functions.js');
+const mongoose = require('mongoose');
+const Models = require('../models.js');
 
 //Main loop for executing command
 module.exports.run = async(client, message, args) => {
   //group create [name] [game] [date] [time]
-  if (args[1] === "create") {
+  if (args[0] === "create") {
+    message.channel.send("at least u tried lol");
 
     var dateTime = func.readUserDate(args[3], args[4]);
-    if (dateTime === false) {
-      return;
-    }
+    var server = message.guild.id;
 
-    var group = {
+    if (dateTime === false) {
+      message.channel.send("Please specify the date and time of your group's meeting time.");
+      return;
+    } 
+
+    var group = new Models.Group({
       creator: message.author,
-      name: args[2],
-      game: args[3],
+      name: args[1],
+      game: args[2],
       time: dateTime,
-      participants: [message.author]
-    }
+      participants: [message.author],
+      server: server
+    });
+
+    //i have no idea how to use mongodb and why this throws an error
+    group.save(function(error) {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log("Group successfully saved into mongodb.");
+      }
+    });
 
     //save this to the database, and remember to include server it was created on
 

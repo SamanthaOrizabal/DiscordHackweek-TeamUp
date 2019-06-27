@@ -10,10 +10,7 @@ const Models = require('../models.js');
 module.exports.run = async(client, message, args) => {
   //group create [name] [game] [date] [time]
   //group args[0] args[1] args[2] args[3] args[4]
-<<<<<<< HEAD
-=======
   var server = message.guild.id;
->>>>>>> 6eb92543792e79faedf813921d94a035f0f2dab7
   if (args[0] === "create") {
 
     var dateTime = func.readUserDate(args[3], args[4]);
@@ -62,20 +59,9 @@ module.exports.run = async(client, message, args) => {
 
   } else if (args[0] === "join") { //group join [name]
     //find group with name == args[1] in this server/message channel
-<<<<<<< HEAD
-<<<<<<< HEAD
-    //add message.author t0 participants list
-    Models.Group.findOne({ name: args[1], server: message.guild.id }, function(err, docs) {
-=======
     //add message.author to participants list
     // COMBAK: We need to prevent players from joining if they are already in the group
     Models.Group.findOne({ name: args[1], server: server }, function(err, docs) {
->>>>>>> 854b040029489208996738289caa442d5fc463db
-=======
-    //add message.author to participants list
-    // COMBAK: We need to prevent players from joining if they are already in the group
-    Models.Group.findOne({ name: args[1], server: server }, function(err, docs) {
->>>>>>> 6eb92543792e79faedf813921d94a035f0f2dab7
       if (err) {
         console.error(err)
         return;
@@ -143,11 +129,6 @@ module.exports.run = async(client, message, args) => {
     //find group with name == args[1] in this server/message channel
     //send message about the info of the group
     //name of group, time and date, game, participants, owner
-<<<<<<< HEAD
-    Models.Group.find({server: server, name: args[1]}, function(error, result) {
-      console.log(result);
-
-=======
     Models.Group.findOne({server: server, name: args[1]}, function(error, result) {
       console.log(result);
       var creatorID = result.creator.substring(2, result.creator.length-1);
@@ -169,11 +150,10 @@ module.exports.run = async(client, message, args) => {
         .addField("Game", game, true)
         .addField("Date", date, true)
         .addField("Participants", participants);
-      
+
       message.channel.send(groupInfoEmbed);
->>>>>>> 6eb92543792e79faedf813921d94a035f0f2dab7
     });
-  } 
+  }
 }
 
 //Config for the command here

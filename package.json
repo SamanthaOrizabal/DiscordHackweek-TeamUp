@@ -21,6 +21,7 @@
     "mongoose": "^5.6.1"
   },
   "dependencies": {
+    "discord-paginationembed": "github:gazmull/discord-paginationembed",
     "fs": "0.0.1-security"
   }
 }

@@ -66,7 +66,6 @@ module.exports.run = async (client, message, args) => {
       docs.save(function (error) {
         if (error) {
           console.error(error);
-          message.channel.send("**ERROR:** " + error.message);
           return;
         } else {
           console.log("Group successfully saved into mongodb.");
@@ -140,9 +139,71 @@ module.exports.run = async (client, message, args) => {
       message.channel.send(groupInfoEmbed);
     });
   } else if (args[0] === "list") { //group list
+    var pages = [];
+    var page = 1;
+
     //lists all the available groups in the server
-    Models.Group.find({ server: server }, function (error, result) {
-      console.log(result);
+
+    var result = await Models.Group.find({ server: server });
+
+    for (var i = 0; i < result.length; i++) {
+      var creatorID = result[i].creator.substring(2, result[i].creator.length - 1);
+      var creatorUsername = message.guild.members.get(creatorID).user.username;
+      var creatorAvatarURL = message.guild.members.get(creatorID).user.displayAvatarURL;
+
+      var participants = result[i].participants;
+      var participantsAmount = result[i].participants.length;
+      var game = result[i].game;
+      var date = result[i].date;
+
+      var embed = new Discord.RichEmbed()
+        .setColor(colors.orange)
+        .setTitle(result[i].name)
+        .setAuthor(creatorUsername + "'s " + game + " group", creatorAvatarURL)
+        .setDescription(creatorUsername + " created this group with " + participantsAmount + " participants for " + game + ".")
+        .setThumbnail(creatorAvatarURL)
+        .addField("Creator", creatorUsername, true)
+        .addField("Game", game, true)
+        .addField("Date", date, true)
+        .addField("Participants", participants);
+
+      pages.push(embed);
+    }
+
+    message.channel.send(pages[0]).then(msg => {
+      msg.react('◀').then(r => {
+        msg.react('▶');
+
+        //Filter ensure variables are correct before running code
+        const backwardsFilter = (reaction, user) => reaction.emoji.name === '◀' && user.id === message.author.id;
+        const forwardsFilter = (reaction, user) => reaction.emoji.name === '▶' && user.id === message.author.id;
+
+        //User will be able to react within 60seconds of requesting this embed
+        const backwards = msg.createReactionCollector(backwardsFilter, { time: 60000 });
+        const forwards = msg.createReactionCollector(forwardsFilter, { time: 60000 });
+
+        backwards.on('collect', r => {
+          if (page === 1) { msg.reactions.get('◀').remove(message.author.id); return; }
+          page--;
+          msg.edit(pages[page - 1]);
+          msg.reactions.get('◀').remove(message.author.id);
+        });
+
+        backwards.on('stop', async () => {
+          await message.clearReactions();
+        });
+
+        forwards.on('collect', r => {
+          if (page === pages.length) { msg.reactions.get('▶').remove(message.author.id); return; }
+          page++;
+          msg.edit(pages[page - 1]);
+          msg.reactions.get('▶').remove(message.author.id);
+        });
+
+        forwards.on('stop', async () => {
+          await message.clearReactions();
+        });
+      });
     });
   } else {
     message.channel.send("I don't understand your request. Type `?help group` for a list of commands I can understand.");

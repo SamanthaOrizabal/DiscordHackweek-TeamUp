@@ -70,13 +70,14 @@ module.exports.checkDates = function(client, interval) {
             console.error(err);
             return;
           }
-          for (var person of team.participants) {
-            var message = "It is time to play " + team.game + " with " + team.name + "!";
-            const recipient = client.fetchUser(person.slice(2,-1)).then(function(res) {
-              exports.sendNotification(res, message);
-            });
+          if (team.participants.length > 0) {
+            for (var person of team.participants) {
+              var message = "It is time to play " + team.game + " with " + team.name + "!";
+              const recipient = client.fetchUser(person.slice(2,-1)).then(function(res) {
+                exports.sendNotification(res, message);
+              });
+            }
           }
-
         });
       }, exports.calculateDelay(group.date));
     }

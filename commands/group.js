@@ -114,7 +114,7 @@ module.exports.run = async (client, message, args) => {
         return;
       }
 
-      if (docs.creator == message.author) {
+      if (docs.creator == "<@" + message.author.id + ">") {
         message.channel.send("You cannot leave a group you created. You can remove the group using `?group disband " + args[2] +"`.");
         return;
       }

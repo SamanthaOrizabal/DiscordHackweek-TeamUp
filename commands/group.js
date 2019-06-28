@@ -11,21 +11,17 @@ module.exports.run = async (client, message, args) => {
   //group create [name] [game] [date] [time] [max players]
   //args[0] args[1] args[2] args[3] args[4] args[5] args[6]
   var server = message.guild.id;
-  var regex = /"[^"]+"|[^\s]+/g;
-  var messageContent = message.content.trim();
-  args = messageContent.match(regex).map(e => e.replace(/"(.+)"/, "$1"));
+  if (args[0] === "create") {
 
-  if (args[1] === "create") {
-
-    var dateTime = func.readUserDate(args[4], args[5]);
+    var dateTime = func.readUserDate(args[3], args[4]);
 
     //catch errors
 
-    if (args[2] == null) {
+    if (args[1] == null) {
       message.channel.send("Please specify the name of this group.");
       return;
     }
-    if (args[3] == null) {
+    if (args[2] == null) {
       message.channel.send("Please specify the game this group will play.");
       return;
     }
@@ -33,28 +29,28 @@ module.exports.run = async (client, message, args) => {
       message.channel.send("Please specify the date and time of your group's meeting time in YYYY-MM-DD HH:MM format.");
       return;
     }
-    if (args[6] == null) {
+    if (args[5] == null) {
       message.channel.send("Please specify the maximum number of players for this group.");
       return;
-    } else if (isNaN(args[6])) {
+    } else if (isNaN(args[5])) {
       message.channel.send("Please specify the maximum number of players for this group.");
       return;
     }
 
     var group = new Models.Group({
       creator: message.author,
-      name: args[2],
-      game: args[3],
+      name: args[1],
+      game: args[2],
       date: dateTime,
       participants: [message.author],
-      maxPlayers: args[6],
+      maxPlayers: args[5],
       server: server
     });
 
     //verify a group with the submitted name isn't already in db
-    Models.Group.findOne({ name: args[2] }, function (error, result) {
+    Models.Group.findOne({ name: args[1] }, function (error, result) {
       if (result != null) {
-        message.channel.send("A group with this name already exists! Join them with `?group join " + args[2] + "` or choose a different name.");
+        message.channel.send("A group with this name already exists! Join them with `?group join " + args[1] + "` or choose a different name.");
       } else {
         //save the group into mongodb
         group.save(function (error) {
@@ -67,11 +63,11 @@ module.exports.run = async (client, message, args) => {
         });
       }
     });
-  } else if (args[1] === "join") { //group join [name]
+  } else if (args[0] === "join") { //group join [name]
     //find group with name == args[1] in this server/message channel
     //add message.author to participants list
     // COMBAK: We need to prevent players from joining if they are already in the group
-    Models.Group.findOne({ name: args[2], server: server }, function (err, docs) {
+    Models.Group.findOne({ name: args[1], server: server }, function (err, docs) {
       if (err) {
         console.error(err)
         return;
@@ -100,10 +96,10 @@ module.exports.run = async (client, message, args) => {
         }
       });
     });
-  } else if (args[1] === "leave") { //group leave [name]
+  } else if (args[0] === "leave") { //group leave [name]
     //find group with name == args[1] in this server/message channel
     //remove message.author from participants list
-    Models.Group.findOne({ name: args[2], server: server }, function (err, docs) {
+    Models.Group.findOne({ name: args[1], server: server }, function (err, docs) {
       if (err) {
         console.error(err)
         return;
@@ -114,7 +110,7 @@ module.exports.run = async (client, message, args) => {
       }
 
       if (docs.creator == "<@" + message.author.id + ">") {
-        message.channel.send("You cannot leave a group you created. You can remove the group using `?group disband " + args[2] +"`.");
+        message.channel.send("You cannot leave a group you created. You can remove the group using `?group disband " + args[1] +"`.");
         return;
       }
 
@@ -136,12 +132,12 @@ module.exports.run = async (client, message, args) => {
       }
 
     });
-  } else if (args[1] === "disband" || args[1] === "delete") { //group disband [name]
+  } else if (args[0] === "disband" || args[0] === "delete") { //group disband [name]
     //find group with name == args[1] in this server/message channel
     //confirm message.author is group creator
     //delete group
 
-    Models.Group.findOneAndDelete({ name: args[2], creator: message.author, server: server }, function (err, docs) {
+    Models.Group.findOneAndDelete({ name: args[1], creator: message.author, server: server }, function (err, docs) {
       if (err) {
         console.error(err);
         message.channel.send("An error occurred while trying to delete the group. Please try again.");
@@ -154,7 +150,7 @@ module.exports.run = async (client, message, args) => {
       message.channel.send("Group deleted");
     });
 
-  } else if (args[1] === "kick") { //group kick [username] [group name]
+  } else if (args[0] === "kick") { //group kick [username] [group name]
     //find group with name === args[2] in this server
     //confirm message.author is the group creator
     //confirm user being kicked is in the group
@@ -163,10 +159,10 @@ module.exports.run = async (client, message, args) => {
     var mentionedUserID = "<@" + message.mentions.users.first().id + ">";
 
     if (message.mentions.users.first().id === message.author.id) {
-      message.channel.send("You cannot kick yourself from the group. If you want to delete a group, please use `?group disband " + `${args[3]}` + "`!");
+      message.channel.send("You cannot kick yourself from the group. If you want to delete a group, please use `?group disband " + `${args[2]}` + "`!");
     }
 
-    Models.Group.findOne({ name: args[3], creator: message.author, server: server }, function (err, res) {
+    Models.Group.findOne({ name: args[2], creator: message.author, server: server }, function (err, res) {
       if (err) {
         console.error(err);
         message.channel.send("An error occurred while trying to kick the user. Please try again.");
@@ -184,7 +180,7 @@ module.exports.run = async (client, message, args) => {
           message.channel.send("The selected user is not in the group.");
         }
       }
-      Models.Group.findOneAndUpdate({ name: args[3], creator: message.author, server: server }, { $set: { participants: newParticipants } }, function (error, result) {
+      Models.Group.findOneAndUpdate({ name: args[2], creator: message.author, server: server }, { $set: { participants: newParticipants } }, function (error, result) {
         if (error) {
           console.error(error);
           message.channel.send("An error occurred while trying to kick the user. Please try again.");
@@ -195,11 +191,11 @@ module.exports.run = async (client, message, args) => {
         }
       });
     });
-  } else if (args[1] === "info") { //group info [name]
+  } else if (args[0] === "info") { //group info [name]
     //find group with name == args[1] in this server/message channel
     //send message about the info of the group
     //name of group, time and date, game, participants, owner
-    Models.Group.findOne({ server: server, name: args[2] }, function (error, result) {
+    Models.Group.findOne({ server: server, name: args[1] }, function (error, result) {
       var creatorID = result.creator.substring(2, result.creator.length - 1);
       var creatorUsername = message.guild.members.get(creatorID).user.username;
       var creatorAvatarURL = message.guild.members.get(creatorID).user.displayAvatarURL;
@@ -224,13 +220,16 @@ module.exports.run = async (client, message, args) => {
 
       message.channel.send(groupInfoEmbed);
     });
-  } else if (args[1] === "list") { //group list
+  } else if (args[0] === "list") { //group list
     var pages = [];
     var page = 1;
 
     //lists all the available groups in the server
-
-    var result = await Models.Group.find({ server: server });
+    var result
+    if (args[1] == null)
+      result = await Models.Group.find({ server: server });
+    else
+      result = await Models.Group.find({ server: server, game: args[1] });
 
     for (var i = 0; i < result.length; i++) {
       var creatorID = result[i].creator.substring(2, result[i].creator.length - 1);
@@ -304,7 +303,7 @@ module.exports.config = {
   name: 'group',
   aliases: ['team', "teamup", "squad", "g"],
   description: 'Used to create or manage a group.',
-  usage: 'group create [name] [game] [date] [time] [max players]\n group join [name]\n group leave [name]\n group disband [name]\n group info [name]\n group list\n\n **[name]** and **[game]** must be placed inside double quotation marks \n **[date]** needs to be in YYYY-MM-DD format\n **[time]** should be in HH:MM format',//Time Doesn't need to be in 24h format.
+  usage: 'group create [name] [game] [date] [time] [max players]\n group join [name]\n group leave [name]\n group disband [name]\n group info [name]\n group list (optional)[game]\n\n **[name]** and **[game]** must be placed inside double quotation marks \n **[date]** needs to be in YYYY-MM-DD format\n **[time]** should be in HH:MM format',//Time Doesn't need to be in 24h format.
   example: '?group create "Friday Game Night" "Super Smash Bros" 2019-06-28 20:00 10',
   noalias: "No Aliases"
 }

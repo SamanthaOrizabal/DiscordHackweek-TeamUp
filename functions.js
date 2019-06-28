@@ -70,6 +70,9 @@ module.exports.checkDates = function(client, interval) {
             console.error(err);
             return;
           }
+          if(team == null) {
+            return;
+          }
           if (team.participants.length > 0) {
             for (var person of team.participants) {
               var message = "It is time to play " + team.game + " with " + team.name + "!";

@@ -61,9 +61,14 @@ client.on('message', async message => {
   if (message.content.indexOf(config.prefix) !== 0) return;
 
   //Separate arguments from the command
-  const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-  const command = args.shift().toLowerCase();
 
+  var regex = /"[^"]+"|[^\s]+/g;
+  var messageContent = message.content.trim();
+  var args = message.content.slice(config.prefix.length).trim().match(regex).map(e => e.replace(/"(.+)"/, "$1"));
+
+
+  const command = args.shift().toLowerCase();
+  console.log(args);
   let commandfile = client.commands.get(command) || client.commands.get(client.aliases.get(command));
 
   if (commandfile) {

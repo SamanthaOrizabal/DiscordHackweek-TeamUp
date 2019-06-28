@@ -26,6 +26,7 @@ module.exports.run = async(client, message, args) => {
             .addField("Command", `${cmd.config.name}`)
             .addField("Description", `${cmd.config.description}`)
             .addField("Usage", `${cmd.config.usage || "No Usage"}`)
+            .addField("Example", `${cmd.config.example}`)
             .addField("Aliases", `${cmd.config.aliases}`);
             
             message.channel.send(sendHelpEmbed);
@@ -52,6 +53,7 @@ module.exports.config = {
     name: 'help',
     aliases: ['h', 'commands', 'halp', 'helpme'],
     description: 'Displays all the commands I know!',
-    usage: 'help __command__',
+    usage: 'help [command]',
+    example: '?help group',
     noalias: "No Aliases"
 }

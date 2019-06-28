@@ -12,7 +12,8 @@ module.exports.run = async (client, message, args) => {
   //args[0] args[1] args[2] args[3] args[4] args[5] args[6]
   var server = message.guild.id;
   var regex = /"[^"]+"|[^\s]+/g;
-  args = message.content.match(regex).map(e => e.replace(/"(.+)"/, "$1"));
+  var messageContent = message.content.trim();
+  args = messageContent.match(regex).map(e => e.replace(/"(.+)"/, "$1"));
 
   if (args[1] === "create") {
 
@@ -83,7 +84,7 @@ module.exports.run = async (client, message, args) => {
         message.channel.send("You are already in that group!");
         return;
       }
-      if (docs.participants.length >= docs.maxPlayers){
+      if (docs.participants.length >= docs.maxPlayers) {
         message.channel.send("This group is at maximum capacity.");
         return;
       }
@@ -99,8 +100,6 @@ module.exports.run = async (client, message, args) => {
         }
       });
     });
-
-
   } else if (args[1] === "leave") { //group leave [name]
     //find group with name == args[1] in this server/message channel
     //remove message.author from participants list
@@ -115,7 +114,7 @@ module.exports.run = async (client, message, args) => {
       }
 
       if (docs.creator == message.author) {
-        message.channel.send("You cannot leave a group you created. You can remove the group using `?group disband " + args[2] +"`.");
+        message.channel.send("You cannot leave a group you created. You can remove the group using `?group disband " + args[2] + "`.");
         return;
       }
 
@@ -144,7 +143,8 @@ module.exports.run = async (client, message, args) => {
 
     Models.Group.findOneAndDelete({ name: args[2], creator: message.author, server: server }, function (err, docs) {
       if (err) {
-        console.error(err)
+        console.error(err);
+        message.channel.send("An error occurred while trying to delete the group. Please try again.");
         return;
       }
       if (docs == null) {
@@ -154,14 +154,52 @@ module.exports.run = async (client, message, args) => {
       message.channel.send("Group deleted");
     });
 
+  } else if (args[1] === "kick") { //group kick [username] [group name]
+    //find group with name === args[2] in this server
+    //confirm message.author is the group creator
+    //confirm user being kicked is in the group
+    //kick user
 
+    var mentionedUserID = "<@" + message.mentions.users.first().id + ">";
 
+    if (message.mentions.users.first().id === message.author.id) {
+      message.channel.send("You cannot kick yourself from the group. If you want to delete a group, please use `?group disband " + `${args[3]}` + "`!");
+    }
+
+    Models.Group.findOne({ name: args[3], creator: message.author, server: server }, function (err, res) {
+      if (err) {
+        console.error(err);
+        message.channel.send("An error occurred while trying to kick the user. Please try again.");
+        return;
+      } else if (res == null) {
+        message.channel.send("You are not the creator of the group! You can't kick group members.");
+        return;
+      }
+       else {
+      var newParticipants = res.participants;
+        //If index is > -1, then the user being kicked is in the group
+        if (res.participants.indexOf(mentionedUserID) > -1) {
+          newParticipants.splice(newParticipants.indexOf(mentionedUserID), 1);
+        } else {
+          message.channel.send("The selected user is not in the group.");
+        }
+      }
+      Models.Group.findOneAndUpdate({ name: args[3], creator: message.author, server: server }, { $set: { participants: newParticipants } }, function (error, result) {
+        if (error) {
+          console.error(error);
+          message.channel.send("An error occurred while trying to kick the user. Please try again.");
+          return;
+        }
+        if (result) {
+          message.channel.send("The selected user has been kicked from the group.");
+        }
+      });
+    });
   } else if (args[1] === "info") { //group info [name]
     //find group with name == args[1] in this server/message channel
     //send message about the info of the group
     //name of group, time and date, game, participants, owner
     Models.Group.findOne({ server: server, name: args[2] }, function (error, result) {
-      //console.log(result);
       var creatorID = result.creator.substring(2, result.creator.length - 1);
       var creatorUsername = message.guild.members.get(creatorID).user.username;
       var creatorAvatarURL = message.guild.members.get(creatorID).user.displayAvatarURL;
@@ -216,7 +254,7 @@ module.exports.run = async (client, message, args) => {
         .addField("Date", date, true)
         .addField("Participants", participants, true)
         .addField("Maximum Participants", maxParticipants, true)
-        .setFooter(`Page ${i+1} of ${result.length}`);
+        .setFooter(`Page ${i + 1} of ${result.length}`);
 
       pages.push(embed);
     }

@@ -70,6 +70,10 @@ module.exports.run = async(client, message, args) => {
         message.channel.send("That group doesn't exist");
         return;
       }
+      if (docs.participants.includes(message.author)) {
+        message.channel.send("You are already in that group!");
+        return;
+      }
       docs.participants.push(message.author);
       docs.save(function(error) {
         if (error) {
@@ -87,6 +91,35 @@ module.exports.run = async(client, message, args) => {
   } else if (args[0] === "leave") { //group leave [name]
     //find group with name == args[1] in this server/message channel
     //remove message.author from participants list
+    Models.Group.findOne({ name: args[1], server: message.guild.id }, function(err, docs) {
+      if (err) {
+        console.error(err)
+        return;
+      }
+      if (docs == null) {
+        message.channel.send("That group doesn't exist");
+        return;
+      }
+
+      var index = docs.participants.indexOf(message.author)
+      if (index > -1) {
+        docs.participants.splice(index, 1);
+        docs.save(function(error) {
+          if (error) {
+            console.error(error);
+            message.channel.send("**ERROR:** " + error.message);
+            return;
+          } else {
+            console.log("Group successfully saved into mongodb.");
+            message.channel.send('You left the group.');
+          }
+        });
+      } else {
+        message.channel.send("you are not in that group!");
+      }
+
+    });
+
 
   } else if (args[0] === "disband") { //group disband [name]
     //find group with name == args[1] in this server/message channel
@@ -117,10 +150,10 @@ module.exports.run = async(client, message, args) => {
         .addField("Game", game, true)
         .addField("Date", date, true)
         .addField("Participants", participants);
-      
+
       message.channel.send(groupInfoEmbed);
     });
-  } 
+  }
 }
 
 //Config for the command here

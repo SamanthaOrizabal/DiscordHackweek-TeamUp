@@ -26,7 +26,7 @@ module.exports.run = async (client, message, args) => {
       game: args[2],
       date: dateTime,
       participants: [message.author],
-      maxPlayers: args[5]
+      maxPlayers: args[5],
       server: server
     });
 

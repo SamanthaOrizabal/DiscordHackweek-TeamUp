@@ -9,6 +9,7 @@ let groupSchema = new Schema({
     participants: {
         type: [String]
     },
+    maxPlayers: Number,
     server: String
 });
 

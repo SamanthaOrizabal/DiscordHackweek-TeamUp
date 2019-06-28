@@ -26,6 +26,7 @@ module.exports.run = async (client, message, args) => {
       game: args[2],
       date: dateTime,
       participants: [message.author],
+      maxPlayers: args[5]
       server: server
     });
 
@@ -153,7 +154,7 @@ module.exports.config = {
   name: 'group',
   aliases: ['team', "teamup", "squad"],
   description: 'Used to create or manage a group.',
-  usage: 'group create [name] [game] [date] [time], group join [name], group leave [name], group disband [name] \n **[name] and [game] must not contain spaces** \n **[time] needs to be in 24 hour format** \n **[date] needs to be in YYYY-MM-DD format**',
+  usage: 'group create [name] [game] [date] [time] [max players], group join [name], group leave [name], group disband [name] \n **[name] and [game] must not contain spaces** \n **[date] needs to be in YYYY-MM-DD format**',//Time Doesn't need to be in 24h format.
   example: '?group create Friday-Game-Night Super-Smash-Bros 2019-06-28 20:00',
   noalias: "No Aliases"
 }

@@ -41,7 +41,7 @@ module.exports.config = {
     name: 'notify',
     aliases: ['remind', 'setreminder', 'remindme', 'notifyme'],
     description: 'Set reminders for yourself and receive them by DM.',
-    usage: 'notify [date] [time] [message] \n **[time] needs to be in 24 hour format.** \n **[date] needs to be in YYYY-MM-DD format** \n **[message] can have spaces**',
+    usage: 'notify [date] [time] [message] \n **[time]** needs to be in 24 hour format. \n **[date]** needs to be in YYYY-MM-DD format \n **[message]** can have spaces',
     example: '?notify 2019-06-28 23:59 :clap: Discord Hack Week deadline! Submit your bot!',
     noalias: "No Aliases"
 }

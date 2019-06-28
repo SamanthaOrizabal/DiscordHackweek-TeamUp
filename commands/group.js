@@ -110,25 +110,63 @@ module.exports.run = async (client, message, args) => {
       }
 
       if (docs.creator == "<@" + message.author.id + ">") {
-        message.channel.send("You cannot leave a group you created. You can remove the group using `?group disband " + args[1] +"`.");
-        return;
-      }
+        message.channel.send();
+        var confirmationEmbed = new Discord.RichEmbed()
+          .setColor(colors.red)
+          .setTitle("Are you sure?")
+          .setDescription("You cannot leave a group you created. \nYou can remove the group using `?group disband " + args[2] + "`." + "\n If you **really** want to leave, click on the :white_check_mark: emote (this will delete your group).");
 
-      var index = docs.participants.indexOf(message.author)
-      if (index > -1) {
-        docs.participants.splice(index, 1);
-        docs.save(function (error) {
-          if (error) {
-            console.error(error);
-            message.channel.send("**ERROR:** " + error.message);
-            return;
-          } else {
-            console.log("Group successfully saved into mongodb.");
-            message.channel.send('You left the group.');
-          }
+        message.channel.send(confirmationEmbed).then(msg => {
+          msg.react('✅').then(r => {
+            msg.react('❎');
+
+            //Filter ensure variables are correct before running code
+            const yesFilter = (reaction, user) => reaction.emoji.name === '✅' && user.id === message.author.id;
+            const noFilter = (reaction, user) => reaction.emoji.name === '❎' && user.id === message.author.id;
+
+            //User will be able to react within 60seconds of requesting this embed
+            const yes = msg.createReactionCollector(yesFilter, { time: 60000 });
+            const no = msg.createReactionCollector(noFilter, { time: 60000 });
+
+            yes.on('collect', r => {
+              Models.Group.findOneAndDelete({ name: args[2], server: server }, function(error, result) {
+                message.channel.send(":ok_hand: I've deleted the group for you.");
+              });
+              msg.reactions.get('✅').remove(message.author.id);
+              msg.delete();
+            });
+
+            yes.on('stop', async () => {
+              await message.clearReactions();
+            });
+
+            no.on('collect', r => {
+              message.channel.send("Your group will not be deleted.");
+              msg.reactions.get('❎').remove(message.author.id);
+              msg.delete();
+            });
+
+            no.on('stop', async () => {
+              await message.clearReactions();
+            });
+          });
         });
       } else {
-        message.channel.send("You are not in that group!");
+        var index = docs.participants.indexOf(message.author);
+        if (index > -1) {
+          docs.participants.splice(index, 1);
+          docs.save(function (error) {
+            if (error) {
+              console.error(error);
+              return;
+            } else {
+              console.log("Group successfully saved into mongodb.");
+              message.channel.send('You left the group.');
+            }
+          });
+        } else {
+          message.channel.send("You are not in that group!");
+        }
       }
 
     });
@@ -159,7 +197,8 @@ module.exports.run = async (client, message, args) => {
     var mentionedUserID = "<@" + message.mentions.users.first().id + ">";
 
     if (message.mentions.users.first().id === message.author.id) {
-      message.channel.send("You cannot kick yourself from the group. If you want to delete a group, please use `?group disband " + `${args[2]}` + "`!");
+      message.channel.send("You cannot kick yourself from the group. If you want to delete a group, please use `?group disband " + `${args[3]}` + "`!");
+      return;
     }
 
     Models.Group.findOne({ name: args[2], creator: message.author, server: server }, function (err, res) {
@@ -171,8 +210,8 @@ module.exports.run = async (client, message, args) => {
         message.channel.send("You are not the creator of the group! You can't kick group members.");
         return;
       }
-       else {
-      var newParticipants = res.participants;
+      else {
+        var newParticipants = res.participants;
         //If index is > -1, then the user being kicked is in the group
         if (res.participants.indexOf(mentionedUserID) > -1) {
           newParticipants.splice(newParticipants.indexOf(mentionedUserID), 1);
@@ -231,68 +270,74 @@ module.exports.run = async (client, message, args) => {
     else
       result = await Models.Group.find({ server: server, game: args[1] });
 
-    for (var i = 0; i < result.length; i++) {
-      var creatorID = result[i].creator.substring(2, result[i].creator.length - 1);
-      var creatorUsername = message.guild.members.get(creatorID).user.username;
-      var creatorAvatarURL = message.guild.members.get(creatorID).user.displayAvatarURL;
+    if (result.length == 0) {
+      message.channel.send("No groups to list! To make a group, check out `?help group`!");
+      return;
+    } else {
 
-      var participants = result[i].participants;
-      var participantsAmount = result[i].participants.length;
-      var maxParticipants = result[i].maxPlayers;
-      var game = result[i].game;
-      var date = result[i].date;
+      for (var i = 0; i < result.length; i++) {
+        var creatorID = result[i].creator.substring(2, result[i].creator.length - 1);
+        var creatorUsername = message.guild.members.get(creatorID).user.username;
+        var creatorAvatarURL = message.guild.members.get(creatorID).user.displayAvatarURL;
 
-      var embed = new Discord.RichEmbed()
-        .setColor(colors.orange)
-        .setTitle(result[i].name)
-        .setAuthor(creatorUsername + "'s " + game + " group", creatorAvatarURL)
-        .setDescription(creatorUsername + " created this group with " + participantsAmount + " participants for " + game + ".")
-        .setThumbnail(creatorAvatarURL)
-        .addField("Creator", creatorUsername, true)
-        .addField("Game", game, true)
-        .addField("Date", date, true)
-        .addField("Participants", participants, true)
-        .addField("Maximum Participants", maxParticipants, true)
-        .setFooter(`Page ${i + 1} of ${result.length}`);
+        var participants = result[i].participants;
+        var participantsAmount = result[i].participants.length;
+        var maxParticipants = result[i].maxPlayers;
+        var game = result[i].game;
+        var date = result[i].date;
 
-      pages.push(embed);
-    }
+        var embed = new Discord.RichEmbed()
+          .setColor(colors.orange)
+          .setTitle(result[i].name)
+          .setAuthor(creatorUsername + "'s " + game + " group", creatorAvatarURL)
+          .setDescription(creatorUsername + " created this group with " + participantsAmount + " participants for " + game + ".")
+          .setThumbnail(creatorAvatarURL)
+          .addField("Creator", creatorUsername, true)
+          .addField("Game", game, true)
+          .addField("Date", date, true)
+          .addField("Participants", participants, true)
+          .addField("Maximum Participants", maxParticipants, true)
+          .setFooter(`Page ${i + 1} of ${result.length}`);
 
-    message.channel.send(pages[0]).then(msg => {
-      msg.react('◀').then(r => {
-        msg.react('▶');
+        pages.push(embed);
+      }
 
-        //Filter ensure variables are correct before running code
-        const backwardsFilter = (reaction, user) => reaction.emoji.name === '◀' && user.id === message.author.id;
-        const forwardsFilter = (reaction, user) => reaction.emoji.name === '▶' && user.id === message.author.id;
+      message.channel.send(pages[0]).then(msg => {
+        msg.react('◀').then(r => {
+          msg.react('▶');
 
-        //User will be able to react within 60seconds of requesting this embed
-        const backwards = msg.createReactionCollector(backwardsFilter, { time: 60000 });
-        const forwards = msg.createReactionCollector(forwardsFilter, { time: 60000 });
+          //Filter ensure variables are correct before running code
+          const backwardsFilter = (reaction, user) => reaction.emoji.name === '◀' && user.id === message.author.id;
+          const forwardsFilter = (reaction, user) => reaction.emoji.name === '▶' && user.id === message.author.id;
 
-        backwards.on('collect', r => {
-          if (page === 1) { msg.reactions.get('◀').remove(message.author.id); return; }
-          page--;
-          msg.edit(pages[page - 1]);
-          msg.reactions.get('◀').remove(message.author.id);
-        });
+          //User will be able to react within 60seconds of requesting this embed
+          const backwards = msg.createReactionCollector(backwardsFilter, { time: 60000 });
+          const forwards = msg.createReactionCollector(forwardsFilter, { time: 60000 });
 
-        backwards.on('stop', async () => {
-          await message.clearReactions();
-        });
+          backwards.on('collect', r => {
+            if (page === 1) { msg.reactions.get('◀').remove(message.author.id); return; }
+            page--;
+            msg.edit(pages[page - 1]);
+            msg.reactions.get('◀').remove(message.author.id);
+          });
 
-        forwards.on('collect', r => {
-          if (page === pages.length) { msg.reactions.get('▶').remove(message.author.id); return; }
-          page++;
-          msg.edit(pages[page - 1]);
-          msg.reactions.get('▶').remove(message.author.id);
-        });
+          backwards.on('stop', async () => {
+            await message.clearReactions();
+          });
 
-        forwards.on('stop', async () => {
-          await message.clearReactions();
+          forwards.on('collect', r => {
+            if (page === pages.length) { msg.reactions.get('▶').remove(message.author.id); return; }
+            page++;
+            msg.edit(pages[page - 1]);
+            msg.reactions.get('▶').remove(message.author.id);
+          });
+
+          forwards.on('stop', async () => {
+            await message.clearReactions();
+          });
         });
       });
-    });
+    }
   } else {
     message.channel.send("I don't understand your request. Type `?help group` for a list of commands I can understand.");
   }

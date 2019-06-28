@@ -15,11 +15,27 @@ module.exports.run = async (client, message, args) => {
 
     var dateTime = func.readUserDate(args[3], args[4]);
 
-    if (dateTime === false) {
-      message.channel.send("Please specify the date and time of your group's meeting time.");
+    //catch errors
+
+    if (args[1] == null) {
+      message.channel.send("Please specify the name of this group.");
       return;
     }
-
+    if (args[2] == null) {
+      message.channel.send("Please specify the game this group will play.");
+      return;
+    }
+    if (dateTime === false) {
+      message.channel.send("Please specify the date and time of your group's meeting time in YYYY-MM-DD HH:MM format.");
+      return;
+    }
+    if (args[5] == null) {
+      message.channel.send("Please specify the maximum number of players for this group.");
+      return;
+    } else if (isNaN(args[5])) {
+      message.channel.send("Please specify the maximum number of players for this group.");
+      return;
+    }
     var group = new Models.Group({
       creator: message.author,
       name: args[1],
@@ -41,6 +57,7 @@ module.exports.run = async (client, message, args) => {
             console.error(error);
           } else {
             console.log("Group successfully saved into mongodb.");
+            message.channel.send("Group created!");
           }
         });
       }
@@ -62,6 +79,11 @@ module.exports.run = async (client, message, args) => {
         message.channel.send("You are already in that group!");
         return;
       }
+      if (docs.participants.length >= docs.maxPlayers){
+        message.channel.send("This group is at maximum capacity.");
+        return;
+      }
+
       docs.participants.push(message.author);
       docs.save(function (error) {
         if (error) {
@@ -78,13 +100,18 @@ module.exports.run = async (client, message, args) => {
   } else if (args[0] === "leave") { //group leave [name]
     //find group with name == args[1] in this server/message channel
     //remove message.author from participants list
-    Models.Group.findOne({ name: args[1], server: message.guild.id }, function (err, docs) {
+    Models.Group.findOne({ name: args[1], server: server }, function (err, docs) {
       if (err) {
         console.error(err)
         return;
       }
       if (docs == null) {
         message.channel.send("That group doesn't exist.");
+        return;
+      }
+
+      if (docs.creator == message.author) {
+        message.channel.send("You cannot leave a group you created. You can remove the group using `?group disband " + args[1] +"`.");
         return;
       }
 
@@ -106,10 +133,25 @@ module.exports.run = async (client, message, args) => {
       }
 
     });
-  } else if (args[0] === "disband") { //group disband [name]
+  } else if (args[0] === "disband" || args[0] === "delete") { //group disband [name]
     //find group with name == args[1] in this server/message channel
     //confirm message.author is group creator
     //delete group
+
+    Models.Group.findOneAndDelete({ name: args[1], creator: message.author, server: server }, function (err, docs) {
+      if (err) {
+        console.error(err)
+        return;
+      }
+      if (docs == null) {
+        message.channel.send("You cannot delete that group.");
+        return;
+      }
+      message.channel.send("Group deleted");
+    });
+
+
+
   } else if (args[0] === "info") { //group info [name]
     //find group with name == args[1] in this server/message channel
     //send message about the info of the group
@@ -213,9 +255,9 @@ module.exports.run = async (client, message, args) => {
 //Config for the command here
 module.exports.config = {
   name: 'group',
-  aliases: ['team', "teamup", "squad"],
+  aliases: ['team', "teamup", "squad", "g"],
   description: 'Used to create or manage a group.',
-  usage: 'group create [name] [game] [date] [time] [max players], group join [name], group leave [name], group disband [name] \n **[name] and [game] must not contain spaces** \n **[date] needs to be in YYYY-MM-DD format**',//Time Doesn't need to be in 24h format.
+  usage: 'group create [name] [game] [date] [time] [max players]\n group join [name]\n group leave [name]\n group disband [name]\n group info [name]\n group list\n\n **[name]** and **[game]** must not contain spaces \n **[date]** needs to be in YYYY-MM-DD format\n **[time]** should be in HH:MM format',//Time Doesn't need to be in 24h format.
   example: '?group create Friday-Game-Night Super-Smash-Bros 2019-06-28 20:00',
   noalias: "No Aliases"
 }

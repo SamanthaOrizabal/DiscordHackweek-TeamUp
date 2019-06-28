@@ -6,6 +6,8 @@ module.exports.calculateDelay = function(date) {
 
 module.exports.to24hour = function(time) {
   //take input time and returns in 24h format
+  if (time == null)
+    return false;
 
   time = time.split(':');
 
@@ -31,11 +33,14 @@ module.exports.to24hour = function(time) {
 }
 
 module.exports.readUserDate = function(date, time) {
+  if (time == null || date == null) {
+    return false;
+  }
   time = module.exports.to24hour(time);
   var dateTime = new Date(date + "T" + time);
   //This is a determine if the date is invalid and reply appropriately
   if (isNaN(dateTime.getTime())) {
-    message.channel.send("Sorry! That is not a vaild date/time format. See `?help create` for more info."); // COMBAK: Maybe we need a help page specifically for dates
+    //message.channel.send("Sorry! That is not a vaild date/time format. See `?help create` for more info."); // COMBAK: Maybe we need a help page specifically for dates
     return false;
   }
   return dateTime;

@@ -1,3 +1,6 @@
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+
 module.exports.calculateDelay = function(date) {
   //calculate the number of milliseconds until the specified date
   var now = new Date();
@@ -50,4 +53,34 @@ module.exports.sendNotification = function(recipient, message) {
   recipient.send(message)
     .then(message => console.log(`Sent message: ${message.content}`))
     .catch(console.error);
+}
+
+module.exports.checkDates = function(client, interval) {
+  var checkTo = new Date().setTime(new Date().getTime() + (interval));
+  Models.Group.find({date:{$lte: checkTo}}, {_id:1, date:1}, function(err, docs) {//check for groups that need to be notified soon
+    if (err) {
+      console.error(err);
+      return;
+    }
+
+    for (var group of docs) { //each group needing to be notified
+      setTimeout(function() { //run at notification time
+        Models.Group.findByIdAndRemove(group._id, function(err, team) { //remove from database once group has been notified
+          if (err) {
+            console.error(err);
+            return;
+          }
+          for (var person of team.participants) {
+            var message = "It is time to play " + team.game + " with " + team.name + "!";
+            const recipient = client.fetchUser(person.slice(2,-1)).then(function(res) {
+              exports.sendNotification(res, message);
+            });
+          }
+
+        });
+      }, exports.calculateDelay(group.date));
+    }
+
+  }).sort({date:1})
+
 }

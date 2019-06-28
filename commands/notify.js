@@ -33,6 +33,7 @@ module.exports.run = async(client, message, args) => {
 
   message.channel.send("Okay! I will send you a notification at " + new Date(dateTime) + ".");
   setTimeout(function() {func.sendNotification(message.author, reply)}, func.calculateDelay(dateTime));
+  console.log(message.author);
 }
 
 //Config for the command here

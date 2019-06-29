@@ -14,9 +14,8 @@ Create groups based on the desired game and time, get a private message when it'
 ### Features
 - Notifications: get notified by private message
 - Groups: create groups based on custom events, games or gatherings
-- Database: all data is stored in MongoDB to allow our bot to run on multiple servers
-- Filters: filter groups by game
-- Simplicity: only 2 commands to use!
+- Database: all data is stored in a database to allow our bot to run on multiple servers and keep track of events even if it goes offline
+- Filters: search for groups to play with by game
 
 ## Commands
 Here are the commands available. Our prefix is **tu?**

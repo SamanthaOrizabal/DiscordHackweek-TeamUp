@@ -236,6 +236,17 @@ module.exports.run = async (client, message, args) => {
     //send message about the info of the group
     //name of group, time and date, game, participants, owner
     Models.Group.findOne({ server: server, name: args[1] }, function (error, result) {
+      if (error){
+        console.log(error);
+        return;
+      }
+      if (result == null) {
+        message.channel.send("I cant find that group!");
+        return;
+      }
+
+
+
       var creatorID = result.creator.substring(2, result.creator.length - 1);
       var creatorUsername = message.guild.members.get(creatorID).user.username;
       var creatorAvatarURL = message.guild.members.get(creatorID).user.displayAvatarURL;

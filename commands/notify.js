@@ -4,6 +4,8 @@ const config = require('../config.json');
 const colors = require('../colors.json');
 const func = require('../functions.js');
 
+const prefix = config.prefix;
+
 //Main loop for executing command
 module.exports.run = async(client, message, args) => {
 
@@ -16,20 +18,14 @@ module.exports.run = async(client, message, args) => {
     message.channel.send("Please specify the message you want the notification to contain.");
     return;
   }
+  var date = func.getDateFromMessage(args[0]);
+  var dateTime = func.readUserDate(date, args[1])
+  if (dateTime === false)
+    return;
 
-  var time = func.to24hour(args[1]);
-  var date = args[0];
   //Remove date and time args to retain rest of message
   args.splice(0, 2);
-  var dateTime = new Date(date + "T" + time);
   var msg = args.join(" ");
-  console.log(time, date, dateTime);
-  console.log(date+"T"+time);
-  //This is a determine if the date is invalid and reply appropriately
-  if (isNaN(dateTime.getTime())) {
-    message.channel.send("Sorry! That is not a vaild date/time format. See `?help notify` for more info.");
-    return;
-  }
 
   //sends a DM to the user that calls the command at the specified time
   let reply = new Discord.RichEmbed()
@@ -38,7 +34,6 @@ module.exports.run = async(client, message, args) => {
   .setDescription(msg);
 
   message.channel.send("Okay! I will send you a notification at " + new Date(dateTime) + ".");
-  console.log(func.calculateDelay(dateTime));
   setTimeout(function() {func.sendNotification(message.author, reply)}, func.calculateDelay(dateTime));
 }
 
@@ -47,6 +42,7 @@ module.exports.config = {
     name: 'notify',
     aliases: ['remind', 'setreminder', 'remindme', 'notifyme'],
     description: 'Set reminders for yourself and receive them by DM.',
-    usage: 'notify YYYY-MM-DD HH:MM message',
+    usage: '`' + prefix + 'notify [date] [time] [message]` \n\n **[time]** needs to be in 24 hour format. \n **[date]** needs to be in YYYY-MM-DD format \n **[message]** can have spaces',
+    example: '`' + `${prefix}` + ' notify 2019-06-28 23:59 :clap: Discord Hack Week deadline!`',
     noalias: "No Aliases"
 }

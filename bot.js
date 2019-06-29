@@ -6,11 +6,18 @@ const colors = require('./colors.json');
 const fs = require('fs');
 const func = require('./functions.js');
 
-
-
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
+  var timeInterval = 60000; //1 minute
+  setInterval(function() {
+    func.checkDates(client, timeInterval);
+  }, timeInterval)
+});
+
+client.on('guildCreate', guild => {
+  console.log(`Bot joined new server!`);
+  guild.channels.get("general").send("Hi! Type `tu? to get started!`");
 });
 
 //Create Collections for commands and commands aliases
@@ -38,6 +45,9 @@ fs.readdir('./commands', (err, files) => {
   });
 });
 
+client.mongoose = require('./utils/mongoose');
+client.mongoose.init();
+
 client.on('message', async message => {
 
   /*
@@ -53,13 +63,24 @@ client.on('message', async message => {
   if (message.content.indexOf(config.prefix) !== 0) return;
 
   //Separate arguments from the command
-  const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-  const command = args.shift().toLowerCase();
 
+  var regex = /"[^"]+"|[^\s]+/g;
+  var messageContent = message.content.trim();
+  var args = messageContent.slice(config.prefix.length).trim()
+  if (args.length < 1) {
+      client.commands.get('help').run(client, message, args)
+      return;
+  }
+  args = args.match(regex).map(e => e.replace(/"(.+)"/, "$1"));
+
+
+  const command = args.shift().toLowerCase();
   let commandfile = client.commands.get(command) || client.commands.get(client.aliases.get(command));
 
   if (commandfile) {
     commandfile.run(client, message, args);
+  } else {
+    client.commands.get('help').run(client, message, args)
   }
 });
 

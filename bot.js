@@ -6,8 +6,6 @@ const colors = require('./colors.json');
 const fs = require('fs');
 const func = require('./functions.js');
 
-
-
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
@@ -64,7 +62,7 @@ client.on('message', async message => {
 
   var regex = /"[^"]+"|[^\s]+/g;
   var messageContent = message.content.trim();
-  var args = message.content.slice(config.prefix.length).trim().match(regex).map(e => e.replace(/"(.+)"/, "$1"));
+  var args = messageContent.slice(config.prefix.length).trim().match(regex).map(e => e.replace(/"(.+)"/, "$1"));
 
 
   const command = args.shift().toLowerCase();

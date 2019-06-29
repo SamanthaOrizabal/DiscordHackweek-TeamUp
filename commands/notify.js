@@ -4,6 +4,8 @@ const config = require('../config.json');
 const colors = require('../colors.json');
 const func = require('../functions.js');
 
+const prefix = config.prefix;
+
 //Main loop for executing command
 module.exports.run = async(client, message, args) => {
 
@@ -42,6 +44,6 @@ module.exports.config = {
     aliases: ['remind', 'setreminder', 'remindme', 'notifyme'],
     description: 'Set reminders for yourself and receive them by DM.',
     usage: 'notify [date] [time] [message] \n **[time]** needs to be in 24 hour format. \n **[date]** needs to be in YYYY-MM-DD format \n **[message]** can have spaces',
-    example: '?notify 2019-06-28 23:59 :clap: Discord Hack Week deadline! Submit your bot!',
+    example: '`' + `${prefix}` + ' notify 2019-06-28 23:59 :clap: Discord Hack Week deadline!`',
     noalias: "No Aliases"
 }

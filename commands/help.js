@@ -3,9 +3,10 @@ const auth = require('../auth.json');
 const config = require('../config.json');
 const colors = require('../colors.json');
 
+const prefix = config.prefix;
+
 //Main loop for executing command
 module.exports.run = async(client, message, args) => {
-    const prefix = config.prefix;
     let messagecontent = message.content;
 
     //if (args[0] == "help") return message.channel.send(`Try ${prefix}help instead.`);
@@ -31,7 +32,7 @@ module.exports.run = async(client, message, args) => {
             
             message.channel.send(sendHelpEmbed);
         } else {
-            message.channel.send("I don't recognize " + "`" + messagecontent + "`" + " as a command. Type `?help` for a list of commands");
+            message.channel.send("I don't recognize " + "`" + messagecontent + "`" + " as a command. Type `" + `${prefix}` + " help` for a list of commands");
         }
     }
 
@@ -54,6 +55,6 @@ module.exports.config = {
     aliases: ['h', 'commands', 'halp', 'helpme'],
     description: 'Displays all the commands I know!',
     usage: 'help [command]',
-    example: '?help group',
+    example: '`' + `${prefix}` + ' help group`',
     noalias: "No Aliases"
 }

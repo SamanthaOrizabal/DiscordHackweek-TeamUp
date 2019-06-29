@@ -6,6 +6,7 @@ const func = require('../functions.js');
 const mongoose = require('mongoose');
 const Models = require('../models.js');
 
+const prefix = config.prefix;
 //Main loop for executing command
 module.exports.run = async (client, message, args) => {
   //group create [name] [game] [date] [time] [max players]
@@ -50,7 +51,7 @@ module.exports.run = async (client, message, args) => {
     //verify a group with the submitted name isn't already in db
     Models.Group.findOne({ name: args[1] }, function (error, result) {
       if (result != null) {
-        message.channel.send("A group with this name already exists! Join them with `?group join " + args[1] + "` or choose a different name.");
+        message.channel.send("A group with this name already exists! Join them with `" + `${prefix}` + " group join " + args[1] + "`" + " or choose a different name.");
       } else {
         //save the group into mongodb
         group.save(function (error) {
@@ -114,7 +115,7 @@ module.exports.run = async (client, message, args) => {
         var confirmationEmbed = new Discord.RichEmbed()
           .setColor(colors.red)
           .setTitle("Are you sure?")
-          .setDescription("You cannot leave a group you created. \nYou can remove the group using `?group disband " + args[2] + "`." + "\n If you **really** want to leave, click on the :white_check_mark: emote (this will delete your group).");
+          .setDescription("You cannot leave a group you created. \nYou can remove the group using ` " + `${prefix}` + " group disband " + args[1] + "`" + "\n If you **really** want to leave, click on the :white_check_mark: emote (this will delete your group).");
 
         message.channel.send(confirmationEmbed).then(msg => {
           msg.react('✅').then(r => {
@@ -197,7 +198,7 @@ module.exports.run = async (client, message, args) => {
     var mentionedUserID = "<@" + message.mentions.users.first().id + ">";
 
     if (message.mentions.users.first().id === message.author.id) {
-      message.channel.send("You cannot kick yourself from the group. If you want to delete a group, please use `?group disband " + `${args[3]}` + "`!");
+      message.channel.send("You cannot kick yourself from the group. If you want to delete a group, please use `" + `${prefix}` + " group disband " + `${args[2]}` + "`!");
       return;
     }
 
@@ -271,7 +272,7 @@ module.exports.run = async (client, message, args) => {
       result = await Models.Group.find({ server: server, game: args[1] });
 
     if (result.length == 0) {
-      message.channel.send("No groups to list! To make a group, check out `?help group`!");
+      message.channel.send("No groups to list! To make a group, check out`?help group`!");
       return;
     } else {
 
@@ -349,6 +350,6 @@ module.exports.config = {
   aliases: ['team', "teamup", "squad", "g"],
   description: 'Used to create or manage a group.',
   usage: 'group create [name] [game] [date] [time] [max players]\n group join [name]\n group leave [name]\n group disband [name]\n group info [name]\n group list (optional)[game]\n\n **[name]** and **[game]** must be placed inside double quotation marks \n **[date]** needs to be in YYYY-MM-DD format\n **[time]** should be in HH:MM format',//Time Doesn't need to be in 24h format.
-  example: '?group create "Friday Game Night" "Super Smash Bros" 2019-06-28 20:00 10',
+  example: "`" + `${prefix}` + ' group create "Epic Game Night" "Super Smash Bros" 2019-06-28 20:00 10`' + '\n' + '`' + `${prefix}` + ' group info "Super Smash Bros"`',
   noalias: "No Aliases"
 }

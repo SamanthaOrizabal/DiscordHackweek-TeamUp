@@ -132,7 +132,16 @@ module.exports.run = async (client, message, args) => {
             const no = msg.createReactionCollector(noFilter, { time: 60000 });
 
             yes.on('collect', r => {
-              Models.Group.findOneAndDelete({ name: args[2], server: server }, function (error, result) {
+              Models.Group.findOneAndDelete({ name: args[1], server: server }, function (error, result) {
+                if (error) {
+                  console.error(error);
+                  message.channel.send("An error occurred while trying to delete the group. Please try again.");
+                  return;
+                }
+                if (result == null) {
+                  message.channel.send("Sorry, I couldn't delete that group for you.");
+                  return;
+                }
                 message.channel.send(":ok_hand: I've deleted the group for you.");
               });
               msg.reactions.get('✅').remove(message.author.id);

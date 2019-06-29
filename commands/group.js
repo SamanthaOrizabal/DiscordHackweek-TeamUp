@@ -45,7 +45,9 @@ module.exports.run = async (client, message, args) => {
     var group = new Models.Group({
       creator: message.author,
       name: args[1],
+      name_lower: args[1].toLowerCase(),
       game: args[2],
+      game_lower: args[2].toLowerCase(),
       date: dateTime,
       participants: [message.author],
       maxPlayers: args[5],
@@ -53,7 +55,7 @@ module.exports.run = async (client, message, args) => {
     });
 
     //verify a group with the submitted name isn't already in db
-    Models.Group.findOne({ name: args[1] }, function (error, result) {
+    Models.Group.findOne({ name_lower: args[1].toLowerCase() }, function (error, result) {
       if (result != null) {
         message.channel.send("A group with this name already exists! Join them with `" + `${prefix}` + " group join " + args[1] + "`" + " or choose a different name.");
       } else {
@@ -71,7 +73,7 @@ module.exports.run = async (client, message, args) => {
     //find group with name == args[1] in this server/message channel
     //add message.author to participants list
     // COMBAK: We need to prevent players from joining if they are already in the group
-    Models.Group.findOne({ name: args[1], server: server }, function (err, docs) {
+    Models.Group.findOne({ name_lower: args[1].toLowerCase(), server: server }, function (err, docs) {
       if (err) {
         console.error(err)
         return;
@@ -102,7 +104,7 @@ module.exports.run = async (client, message, args) => {
   } else if (args[0] === "leave") { //group leave [name]
     //find group with name == args[1] in this server/message channel
     //remove message.author from participants list
-    Models.Group.findOne({ name: args[1], server: server }, function (err, docs) {
+    Models.Group.findOne({ name_lower: args[1].toLowerCase(), server: server }, function (err, docs) {
       if (err) {
         console.error(err)
         return;
@@ -177,7 +179,7 @@ module.exports.run = async (client, message, args) => {
     //confirm message.author is group creator
     //delete group
 
-    Models.Group.findOneAndDelete({ name: args[1], creator: message.author, server: server }, function (err, docs) {
+    Models.Group.findOneAndDelete({ name_lower: args[1].toLowerCase(), creator: message.author, server: server }, function (err, docs) {
       if (err) {
         console.error(err);
         message.channel.send("An error occurred while trying to delete the group. Please try again.");
@@ -203,7 +205,7 @@ module.exports.run = async (client, message, args) => {
       return;
     }
 
-    Models.Group.findOne({ name: args[2], creator: message.author, server: server }, function (err, res) {
+    Models.Group.findOne({ name_lower: args[2].toLowerCase(), creator: message.author, server: server }, function (err, res) {
       if (err) {
         console.error(err);
         message.channel.send("An error occurred while trying to kick the user. Please try again.");
@@ -221,7 +223,7 @@ module.exports.run = async (client, message, args) => {
           message.channel.send("The selected user is not in the group.");
         }
       }
-      Models.Group.findOneAndUpdate({ name: args[2], creator: message.author, server: server }, { $set: { participants: newParticipants } }, function (error, result) {
+      Models.Group.findOneAndUpdate({ name_lower: args[2].toLowerCase(), creator: message.author, server: server }, { $set: { participants: newParticipants } }, function (error, result) {
         if (error) {
           console.error(error);
           message.channel.send("An error occurred while trying to kick the user. Please try again.");
@@ -236,7 +238,7 @@ module.exports.run = async (client, message, args) => {
     //find group with name == args[1] in this server/message channel
     //send message about the info of the group
     //name of group, time and date, game, participants, owner
-    Models.Group.findOne({ server: server, name: args[1] }, function (error, result) {
+    Models.Group.findOne({ server: server, name_lower: args[1].toLowerCase() }, function (error, result) {
       if (error){
         console.log(error);
         return;
@@ -281,7 +283,7 @@ module.exports.run = async (client, message, args) => {
     if (args[1] == null)
       result = await Models.Group.find({ server: server });
     else
-      result = await Models.Group.find({ server: server, game: args[1] });
+      result = await Models.Group.find({ server: server, game_lower: args[1].toLowerCase() });
 
     if (result.length == 0) {
       message.channel.send("No groups to list! To make a group, check out `" + `${prefix}` + " ` help group`!");

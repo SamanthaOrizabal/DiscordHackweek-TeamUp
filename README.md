@@ -20,13 +20,13 @@ Create groups based on the desired game and time, get a private message when it'
 ## Commands
 Here are the commands available. Our prefix is **tu?**
 
-### tu? help
+#### tu? help
 Displays the help message containing all the available commands. Can also be used to find information about other commands.
 
-### tu? notify
+#### tu? notify
 Sets reminders for yourself and receive them by private message. Choose a date, time, and message.
 
-### tu? group
+#### tu? group
 Used to create, join or manage a group. View information about a group or see a list of all the groups on your server.
 
 ## How we built it

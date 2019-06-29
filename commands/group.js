@@ -17,14 +17,17 @@ module.exports.run = async (client, message, args) => {
     var date = func.getDateFromMessage(args[3]);
     var dateTime = func.readUserDate(date, args[4]);
     //catch errors
-
     if (args[1] == null) {
       message.channel.send("Please specify the name of this group.");
       return;
+    } else {
+      args[1] = args[1].trim();
     }
     if (args[2] == null) {
       message.channel.send("Please specify the game this group will play.");
       return;
+    } else {
+      args[2] = args[2].trim();
     }
     if (dateTime === false) {
       message.channel.send("Please specify the date and time of your group's meeting time in YYYY-MM-DD HH:MM format.");

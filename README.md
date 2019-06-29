@@ -38,7 +38,9 @@ Used to create, join or manage a group. View information about a group or see a 
 ## Challenges we ran into
 Oh boy... Where do we even start? 😂
 
-For many of us, this was our first time creating a Discord bot or even working with Node.js. We spent the first few days figuring out how to use 
+For many of us, this was our first time creating a Discord bot or even working with Node.js. We spent the first few days figuring out how to use the discord.js module and the rest of our time building, debugging, and testing our bot (notice how sleep isn't part of our routine 😴).
+
+Our biggest challenge was the problem with whitespace. Particularly leading and trailing whitespace. If a group name or game were to contain leading and trailing whitespace, it would be trimmed when stored into MongoDB and would remain trimmed when reading from the database. However, to grab a group by name, we would have to type in the **exact** name, including whitespace or else the database query would fail. This is a major problem since leading and trailing whitespace are caused by typos, and can lead to frustration when our group isn't found when we seem to be typing in the correct name.
 
 ## What's next for TeamUp
 - Custom prefix

@@ -6,25 +6,51 @@
 ### Entry to [Discord Hack Week 2019](https://blog.discordapp.com/discord-community-hack-week-build-and-create-alongside-us-6b2a7b7bba33)!
 
 ## Inspiration
-blah blah blah
+We've always loved the idea of planning events right in Discord. To solve our problem, we created TeamUp: the ultimate event bot!
 
 ## What it does
-it does cool stuff
+Create groups based on the desired game and time, get a private message when it's time for you to play!
+
+### Features
+- Notifications: get notified by private message
+- Groups: create groups based on custom events, games or gatherings
+- Database: all data is stored in MongoDB to allow our bot to run on multiple servers
+- Filters: filter groups by game
+- Simplicity: only 2 commands to use!
 
 ## Commands
-all the commands here!
+Here are the commands available. Our prefix is **tu?**
+
+### tu? help
+Displays the help message containing all the available commands. Can also be used to find information about other commands.
+
+### tu? notify
+Sets reminders for yourself and receive them by private message. Choose a date, time, and message.
+
+### tu? group
+Used to create, join or manage a group. View information about a group or see a list of all the groups on your server.
 
 ## How we built it
-discord.js, mongoose library for MongoDB
+- [Node.js](https://nodejs.org): a JavaScript runtime built on Chrome's V8 JavaScript engine
+- [discord.js](https://discord.js.org): a powerful Node.js module to interact with the Discord API very easily
+- [MongoDB](https://www.mongodb.com): a cross-platform document-oriented database program
 
 ## Challenges we ran into
-oh man.. lots
+Oh boy... Where do we even start? 😂
+
+For many of us, this was our first time creating a Discord bot or even working with Node.js. We spent the first few days figuring out how to use 
 
 ## What's next for TeamUp
-- Custom command prefix
+- Custom prefix
+- User settings
+- Queue for groups
 
 ## Contributors
-write your usernames here
+- DeusIgnis#6752
+- kevnl#6554
+- ERGC | Xander#6773
+- samvo#3883
+- 🅱iderman#5200
 
 [badge-lisence]: https://img.shields.io/github/license/SamanthaOrizabal/DiscordHackweek-TeamUp.svg?style=flat-square
 [badge-issues]: https://img.shields.io/github/issues/SamanthaOrizabal/DiscordHackweek-TeamUp.svg?style=flat-square

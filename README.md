@@ -47,7 +47,7 @@ Our biggest challenge was the problem with whitespace. Particularly leading and 
 - Queue for groups
 
 ## Want to use it?
-Feel free to download the bot to use for yourself. Just create a "auth.json" file that includes your secret token as a "token" property and run the bot with Node.js. We may look at hosting this bot ourselves in the future if there is enough interest.
+Feel free to download the bot to use for yourself. Just create a "auth.json" file that includes your secret token as a "token" property and run the bot with Node.js. We may look at hosting this bot ourselves in the future if there is enough interest. Use 'node bot.js' to start the bot!
 
 ## Contributors
 - DeusIgnis#6752

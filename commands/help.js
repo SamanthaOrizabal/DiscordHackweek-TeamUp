@@ -27,9 +27,9 @@ module.exports.run = async(client, message, args) => {
             .addField("Command", `${cmd.config.name}`)
             .addField("Description", `${cmd.config.description}`)
             .addField("Usage", `${cmd.config.usage || "No Usage"}`)
+
             .addField("Example", `${cmd.config.example}`)
             .addField("Aliases", `${cmd.config.aliases}`);
-
             message.channel.send(sendHelpEmbed);
         } else {
             message.channel.send("I don't recognize " + "`" + messagecontent + "`" + " as a command. Type `" + `${prefix}` + " help` for a list of commands");
@@ -44,7 +44,6 @@ module.exports.run = async(client, message, args) => {
         These are the commands I can understand!`)
         .addField('Commands', '``' + prefix + ' help`` \n ``' + prefix + ' notify`` \n ``' + prefix + ' group``');
         // .setFooter("TeamUp Bot 2019", client.user.displayAvatarURL);
-
         message.channel.send(embed);
     }
 }
@@ -54,7 +53,9 @@ module.exports.config = {
     name: 'help',
     aliases: ['h', 'commands', 'halp', 'helpme'],
     description: 'Displays all the commands I know!',
+
     usage: 'help [command]',
     example: '`' + `${prefix}` + ' help group`',
+
     noalias: "No Aliases"
 }

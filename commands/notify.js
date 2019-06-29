@@ -18,8 +18,8 @@ module.exports.run = async(client, message, args) => {
     message.channel.send("Please specify the message you want the notification to contain.");
     return;
   }
-
-  var dateTime = func.readUserDate(args[0], args[1])
+  var date = func.getDateFromMessage(args[0]);
+  var dateTime = func.readUserDate(date, args[1])
   if (dateTime === false)
     return;
 
@@ -35,7 +35,6 @@ module.exports.run = async(client, message, args) => {
 
   message.channel.send("Okay! I will send you a notification at " + new Date(dateTime) + ".");
   setTimeout(function() {func.sendNotification(message.author, reply)}, func.calculateDelay(dateTime));
-  console.log(message.author);
 }
 
 //Config for the command here
@@ -43,7 +42,7 @@ module.exports.config = {
     name: 'notify',
     aliases: ['remind', 'setreminder', 'remindme', 'notifyme'],
     description: 'Set reminders for yourself and receive them by DM.',
-    usage: 'notify [date] [time] [message] \n **[time]** needs to be in 24 hour format. \n **[date]** needs to be in YYYY-MM-DD format \n **[message]** can have spaces',
+    usage: '`' + prefix + 'notify [date] [time] [message]` \n\n **[time]** needs to be in 24 hour format. \n **[date]** needs to be in YYYY-MM-DD format \n **[message]** can have spaces',
     example: '`' + `${prefix}` + ' notify 2019-06-28 23:59 :clap: Discord Hack Week deadline!`',
     noalias: "No Aliases"
 }

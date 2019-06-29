@@ -1,6 +1,8 @@
+const Discord = require('discord.js');
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 const chrono = require('chrono-node');
+const colors = require('./colors.json');
 
 module.exports.getDateFromMessage = function(message) {
   var date = chrono.parseDate(message);
@@ -63,7 +65,6 @@ module.exports.readUserDate = function(date, time) {
 
 module.exports.sendNotification = function(recipient, message) {
   recipient.send(message)
-    .then(message => console.log(`Sent message: ${message.content}`))
     .catch(console.error);
 }
 
@@ -87,7 +88,10 @@ module.exports.checkDates = function(client, interval) {
           }
           if (team.participants.length > 0) {
             for (var person of team.participants) {
-              var message = "It is time to play " + team.game + " with " + team.name + "!";
+              var message = new Discord.RichEmbed()
+                .setColor(colors.cyan)
+                .setAuthor(team.name)
+                .setDescription("It is time to play " + team.game + " with " + team.name + "!");
               const recipient = client.fetchUser(person.slice(2,-1)).then(function(res) {
                 exports.sendNotification(res, message);
               });

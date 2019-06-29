@@ -29,7 +29,7 @@ module.exports.run = async(client, message, args) => {
             .addField("Usage", `${cmd.config.usage || "No Usage"}`)
             .addField("Example", `${cmd.config.example}`)
             .addField("Aliases", `${cmd.config.aliases}`);
-            
+
             message.channel.send(sendHelpEmbed);
         } else {
             message.channel.send("I don't recognize " + "`" + messagecontent + "`" + " as a command. Type `" + `${prefix}` + " help` for a list of commands");
@@ -42,7 +42,7 @@ module.exports.run = async(client, message, args) => {
         .setAuthor('Help is here!', message.guild.iconURL)
         .setDescription(`The bot prefix is: **${prefix}**\n
         These are the commands I can understand!`)
-        .addField('Commands', '``help`` ``notify`` ``group``');
+        .addField('Commands', '``' + prefix + ' help`` \n ``' + prefix + ' notify`` \n ``' + prefix + ' group``');
         // .setFooter("TeamUp Bot 2019", client.user.displayAvatarURL);
 
         message.channel.send(embed);

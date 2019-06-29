@@ -62,15 +62,21 @@ client.on('message', async message => {
 
   var regex = /"[^"]+"|[^\s]+/g;
   var messageContent = message.content.trim();
-  var args = messageContent.slice(config.prefix.length).trim().match(regex).map(e => e.replace(/"(.+)"/, "$1"));
+  var args = messageContent.slice(config.prefix.length).trim()
+  if (args.length < 1) {
+      client.commands.get('help').run(client, message, args)
+      return;
+  }
+  args = args.match(regex).map(e => e.replace(/"(.+)"/, "$1"));
 
 
   const command = args.shift().toLowerCase();
-  console.log(args);
   let commandfile = client.commands.get(command) || client.commands.get(client.aliases.get(command));
 
   if (commandfile) {
     commandfile.run(client, message, args);
+  } else {
+    client.commands.get('help').run(client, message, args)
   }
 });
 

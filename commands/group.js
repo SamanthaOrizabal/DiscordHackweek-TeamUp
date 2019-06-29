@@ -21,13 +21,14 @@ module.exports.run = async (client, message, args) => {
       message.channel.send("Please specify the name of this group.");
       return;
     } else {
-      args[1] = args[1].trim();
+      args[1] = args[1].trim().replace(/\s\s+/g, ' ');
+
     }
     if (args[2] == null) {
       message.channel.send("Please specify the game this group will play.");
       return;
     } else {
-      args[2] = args[2].trim();
+      args[2] = args[2].trim().replace(/\s\s+/g, ' ');;
     }
     if (dateTime === false) {
       message.channel.send("Please specify the date and time of your group's meeting time in YYYY-MM-DD HH:MM format.");
@@ -61,7 +62,6 @@ module.exports.run = async (client, message, args) => {
           if (error) {
             console.error(error);
           } else {
-            console.log("Group successfully saved into mongodb.");
             message.channel.send("Group created!");
           }
         });
@@ -95,7 +95,6 @@ module.exports.run = async (client, message, args) => {
           console.error(error);
           return;
         } else {
-          console.log("Group successfully saved into mongodb.");
           message.channel.send('You joined the group.');
         }
       });
@@ -164,7 +163,6 @@ module.exports.run = async (client, message, args) => {
               console.error(error);
               return;
             } else {
-              console.log("Group successfully saved into mongodb.");
               message.channel.send('You left the group.');
             }
           });
@@ -365,7 +363,7 @@ module.exports.config = {
   name: 'group',
   aliases: ['team', "teamup", "squad", "g"],
   description: 'Used to create or manage a group.',
-  usage: 'group create [name] [game] [date] [time] [max players]\n group join [name]\n group leave [name]\n group disband [name]\n group info [name]\n group list (optional)[game]\n\n **[name]** and **[game]** must be placed inside double quotation marks \n **[date]** needs to be in YYYY-MM-DD format\n **[time]** should be in HH:MM format',//Time Doesn't need to be in 24h format.
+  usage: '`' + prefix + 'group create [name] [game] [date] [time] [max players]`\n `' + prefix + 'group join [name]`\n `' + prefix + 'group leave [name]`\n `' + prefix + 'group disband [name]`\n `' + prefix + 'group info [name]`\n `' + prefix + 'group list (optional)[game]`\n `' + prefix + 'group kick @[player] [name]`\n\n **[name]** and **[game]** must be placed inside double quotation marks \n **[date]** should be in YYYY-MM-DD format\n **[time]** should be in HH:MM format',//Time Doesn't need to be in 24h format.
   example: "`" + `${prefix}` + ' group create "Epic Game Night" "Super Smash Bros" 2019-06-28 20:00 10`' + '\n' + '`' + `${prefix}` + ' group info "Super Smash Bros"`',
   noalias: "No Aliases"
 }

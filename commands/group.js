@@ -286,7 +286,7 @@ module.exports.run = async (client, message, args) => {
       result = await Models.Group.find({ server: server, game_lower: args[1].toLowerCase() });
 
     if (result.length == 0) {
-      message.channel.send("No groups to list! To make a group, check out `" + `${prefix}` + " ` help group`!");
+      message.channel.send("No groups to list! To make a group, check out `" + `${prefix}` + " help group`!");
       return;
     } else {
 

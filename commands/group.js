@@ -245,8 +245,6 @@ module.exports.run = async (client, message, args) => {
         return;
       }
 
-
-
       var creatorID = result.creator.substring(2, result.creator.length - 1);
       var creatorUsername = message.guild.members.get(creatorID).user.username;
       var creatorAvatarURL = message.guild.members.get(creatorID).user.displayAvatarURL;
@@ -254,6 +252,7 @@ module.exports.run = async (client, message, args) => {
       var participants = result.participants;
       var participantsAmount = result.participants.length;
       var maxParticipants = result.maxPlayers;
+      var name = result.name;
       var game = result.game;
       var date = result.date;
 
@@ -264,6 +263,7 @@ module.exports.run = async (client, message, args) => {
         .setDescription(creatorUsername + " created this group with " + participantsAmount + " participants for \"" + game + "\"")
         .setThumbnail(creatorAvatarURL)
         .addField("Creator", creatorUsername, true)
+        .addField("Name", "\""+name+"\"", true)
         .addField("Game", "\""+game+"\"", true)
         .addField("Date", date, true)
         .addField("Participants", participants, true)
@@ -295,6 +295,7 @@ module.exports.run = async (client, message, args) => {
         var participants = result[i].participants;
         var participantsAmount = result[i].participants.length;
         var maxParticipants = result[i].maxPlayers;
+        var name = result[i].name;
         var game = result[i].game;
         var date = result[i].date;
 
@@ -302,9 +303,10 @@ module.exports.run = async (client, message, args) => {
           .setColor(colors.orange)
           .setTitle(result[i].name)
           .setAuthor(creatorUsername + "'s " + game + " group", creatorAvatarURL)
-          .setDescription(creatorUsername + " created this group with " + participantsAmount + " participants for \" + game + "\".")
+          .setDescription(creatorUsername + " created this group with " + participantsAmount + " participants for \" + game + \" .")
           .setThumbnail(creatorAvatarURL)
           .addField("Creator", creatorUsername, true)
+          .addField("Name", "\""+name+"\"", true)
           .addField("Game", "\""+game+"\"", true)
           .addField("Date", date, true)
           .addField("Participants", participants, true)

@@ -14,8 +14,8 @@ module.exports.run = async (client, message, args) => {
   var server = message.guild.id;
   if (args[0] === "create") {
 
-    var dateTime = func.readUserDate(args[3], args[4]);
-
+    var date = func.getDateFromMessage(args[3]);
+    var dateTime = func.readUserDate(date, args[4]);
     //catch errors
 
     if (args[1] == null) {

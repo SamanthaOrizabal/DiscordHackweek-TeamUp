@@ -1,5 +1,17 @@
 const mongoose = require('mongoose');
 const Models = require('./models.js');
+const chrono = require('chrono-node');
+
+module.exports.getDateFromMessage = function(message) {
+  var date = chrono.parseDate(message);
+  if (date == null){
+    return null;
+  }
+  var year = date.getFullYear();
+  var month = ("0" + date.getMonth()+1).slice(-2);
+  var day = ("0" + date.getDate()).slice(-2);
+  return year + "-" + month + "-" + day;
+}
 
 module.exports.calculateDelay = function(date) {
   //calculate the number of milliseconds until the specified date

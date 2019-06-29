@@ -236,38 +236,40 @@ module.exports.run = async (client, message, args) => {
     //send message about the info of the group
     //name of group, time and date, game, participants, owner
     Models.Group.findOne({ server: server, name: args[1] }, function (error, result) {
-      if (error) {
-        console.error(error);
-        return;
-      } else if (result == null) {
-        message.channel.send("Can't find a group with that name.");
+      if (error){
+        console.log(error);
         return;
       }
-      else {
-        var creatorID = result.creator.substring(2, result.creator.length - 1);
-        var creatorUsername = message.guild.members.get(creatorID).user.username;
-        var creatorAvatarURL = message.guild.members.get(creatorID).user.displayAvatarURL;
-
-        var participants = result.participants;
-        var participantsAmount = result.participants.length;
-        var maxParticipants = result.maxPlayers;
-        var game = result.game;
-        var date = result.date;
-
-        var groupInfoEmbed = new Discord.RichEmbed()
-          .setColor(colors.orange)
-          .setTitle(result.name)
-          .setAuthor(creatorUsername + "'s " + game + " group", creatorAvatarURL)
-          .setDescription(creatorUsername + " created this group with " + participantsAmount + " participants for " + game + ".")
-          .setThumbnail(creatorAvatarURL)
-          .addField("Creator", creatorUsername, true)
-          .addField("Game", game, true)
-          .addField("Date", date, true)
-          .addField("Participants", participants, true)
-          .addField("Maximum Participants", maxParticipants, true);
-
-        message.channel.send(groupInfoEmbed);
+      if (result == null) {
+        message.channel.send("I cant find that group!");
+        return;
       }
+
+
+
+      var creatorID = result.creator.substring(2, result.creator.length - 1);
+      var creatorUsername = message.guild.members.get(creatorID).user.username;
+      var creatorAvatarURL = message.guild.members.get(creatorID).user.displayAvatarURL;
+
+      var participants = result.participants;
+      var participantsAmount = result.participants.length;
+      var maxParticipants = result.maxPlayers;
+      var game = result.game;
+      var date = result.date;
+
+      var groupInfoEmbed = new Discord.RichEmbed()
+        .setColor(colors.orange)
+        .setTitle(result.name)
+        .setAuthor(creatorUsername + "'s " + game + " group", creatorAvatarURL)
+        .setDescription(creatorUsername + " created this group with " + participantsAmount + " participants for \"" + game + "\"")
+        .setThumbnail(creatorAvatarURL)
+        .addField("Creator", creatorUsername, true)
+        .addField("Game", "\""+game+"\"", true)
+        .addField("Date", date, true)
+        .addField("Participants", participants, true)
+        .addField("Maximum Participants", maxParticipants, true);
+
+      message.channel.send(groupInfoEmbed);
     });
   } else if (args[0] === "list") { //group list
     var pages = [];
@@ -300,10 +302,10 @@ module.exports.run = async (client, message, args) => {
           .setColor(colors.orange)
           .setTitle(result[i].name)
           .setAuthor(creatorUsername + "'s " + game + " group", creatorAvatarURL)
-          .setDescription(creatorUsername + " created this group with " + participantsAmount + " participants for " + game + ".")
+          .setDescription(creatorUsername + " created this group with " + participantsAmount + " participants for \" + game + "\".")
           .setThumbnail(creatorAvatarURL)
           .addField("Creator", creatorUsername, true)
-          .addField("Game", game, true)
+          .addField("Game", "\""+game+"\"", true)
           .addField("Date", date, true)
           .addField("Participants", participants, true)
           .addField("Maximum Participants", maxParticipants, true)

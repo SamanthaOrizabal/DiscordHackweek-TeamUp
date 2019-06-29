@@ -18,7 +18,7 @@
   "homepage": "https://github.com/SamanthaOrizabal/DiscordHackweek-TeamUp#readme",
   "devDependencies": {
     "discord.js": "^11.5.1",
-    "mongoose": "^5.6.1"
+    "mongoose": "^5.6.2"
   },
   "dependencies": {
     "discord-paginationembed": "github:gazmull/discord-paginationembed",

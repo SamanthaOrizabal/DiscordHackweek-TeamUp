@@ -13,7 +13,11 @@ client.on('ready', () => {
   setInterval(function() {
     func.checkDates(client, timeInterval);
   }, timeInterval)
+});
 
+client.on('guildCreate', guild => {
+  console.log(`Bot joined new server!`);
+  guild.channels.get("general").send("Hi! Type `tu? to get started!`");
 });
 
 //Create Collections for commands and commands aliases

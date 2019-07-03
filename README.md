@@ -3,7 +3,7 @@
 ![][badge-issues]
 ![][badge-pull]
 
-**[Add the bot to your server!]**(https://discordapp.com/api/oauth2/authorize?client_id=592847432824389660&permissions=93248&scope=bot)
+**[Add the bot to your server!](https://discordapp.com/api/oauth2/authorize?client_id=592847432824389660&permissions=93248&scope=bot)**
 
 ### Entry to [Discord Hack Week 2019](https://blog.discordapp.com/discord-community-hack-week-build-and-create-alongside-us-6b2a7b7bba33)!
 
